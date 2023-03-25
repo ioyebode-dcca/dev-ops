@@ -1,10 +1,9 @@
 variable "subnet_id_1" {
   type = string
-  default = "subnet-07d002bb7e32b67fc"
+  default = "subnet-0bd163902e4165d24"
 }
 
 variable "subnet_id_2" {
   type = string
-  default = "subnet-03c49bbe3a085ef44"
+  default = "subnet-0937cce09d1668c4b"
 }
-
