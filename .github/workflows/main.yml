@@ -1,6 +1,9 @@
-name: Terraform Workflow
+name: CI
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -21,17 +24,19 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Init
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
-      run: terraform init
-    - name: Terraform Plan
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
-      run: terraform plan
-    - name: Terraform Apply
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
-      run: terraform apply -auto-approve
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
+        run: terraform init
+
+      - name: Terraform Plan
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
+        run: terraform plan
+
+      - name: Terraform Apply
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
+        run: terraform apply -auto-approve
