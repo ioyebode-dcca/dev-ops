@@ -1,0 +1,8 @@
+After setting up the cluster, I encountered some problems. When I tried to run "kubectl get ns" command, an error occurred. I had to run the below commands
+
+aws eks update-kubeconfig --name fwit-cluster --region us-east-1
+export KUBECONFIG=~/.kube/config
+kubectl get nodes
+kubectl get ns
+kubectl create namespace fwit
+kubectl get ns
