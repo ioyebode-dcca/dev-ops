@@ -26,15 +26,15 @@ jobs:
           terraform init \
             -backend-config "terraform-state-fwit" \
             -backend-config "key=eks-terraform-workernodes.tfstate"
-          terraform workspace new dev || terraform workspace select dev
+          #terraform workspace new dev || terraform workspace select dev
       - name: Terraform Format
         #working-directory: Terraform-AWS-Services/elasticsearch/elasticsearch_configuration/
         run: terraform fmt
 
       - name: Terraform Plan
         #working-directory: Terraform-AWS-Services/elasticsearch/elasticsearch_configuration/
-        run: terraform plan -var="environment=development" -var="elasticsearch_password=${{ secrets.ELASTICSEARCH_PASSWORD }}"
+        run: terraform plan
 
       - name: Terraform Apply
         #working-directory: Terraform-AWS-Services/elasticsearch/elasticsearch_configuration/
-        run: terraform apply -var="environment=development" -var="elasticsearch_password=${{ secrets.ELASTICSEARCH_PASSWORD }}" -auto-approve
+        run: terraform apply -auto-approve
