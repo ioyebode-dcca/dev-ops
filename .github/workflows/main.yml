@@ -1,4 +1,4 @@
-name: CI
+name: Terraform Workflow
 
 on:
   workflow_dispatch:
@@ -21,20 +21,17 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Init
-        working-directory: Terraform-AWS-Services/
-        run: |
-          terraform init \
-            -backend-config "bucket=terraform-state-fwit" \
-            -backend-config "key=eks-terraform-workernodes.tfstate"
-          terraform workspace new dev || terraform workspace select dev
-      - name: Terraform Format
-        working-directory: Terraform-AWS-Services/
-        run: terraform fmt
-
-      - name: Terraform Plan
-        working-directory: Terraform-AWS-Services/
-        run: terraform plan -var="environment=development" -var="elasticsearch_password=${{ secrets.ELASTICSEARCH_PASSWORD }}"
-
-      - name: Terraform Apply
-        working-directory: Terraform-AWS-Services/
-        run: terraform apply -var="environment=development" -var="elasticsearch_password=${{ secrets.ELASTICSEARCH_PASSWORD }}" -auto-approve
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
+      run: terraform init
+    - name: Terraform Plan
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
+      run: terraform plan
+    - name: Terraform Apply
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: v1.3.8 # Replace with the version of Terraform you want to use
+      run: terraform apply -auto-approve
