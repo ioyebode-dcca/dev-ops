@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-state-devopsthehardway"
+    bucket = "terraform-state-fwit"
     key    = "eks-terraform-workernodes.tfstate"
     region = "us-east-1"
   }
@@ -14,7 +14,7 @@ terraform {
 
 # IAM Role for EKS to have access to the appropriate resources
 resource "aws_iam_role" "eks-iam-role" {
-  name = "devopsthehardway-eks-iam-role"
+  name = "fwit-eks-iam-role"
 
   path = "/"
 
@@ -46,8 +46,8 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly-EK
 }
 
 ## Create the EKS cluster
-resource "aws_eks_cluster" "devopsthehardway-eks" {
-  name = "devopsthehardway-cluster"
+resource "aws_eks_cluster" "fwit-eks" {
+  name = "fwit-cluster"
   role_arn = aws_iam_role.eks-iam-role.arn
 
   vpc_config {
@@ -61,7 +61,7 @@ resource "aws_eks_cluster" "devopsthehardway-eks" {
 
 ## Worker Nodes
 resource "aws_iam_role" "workernodes" {
-  name = "eks-node-group-example"
+  name = "fwit-eks-node-group"
 
   assume_role_policy = jsonencode({
     Statement = [{
@@ -96,8 +96,8 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
 }
 
 resource "aws_eks_node_group" "worker-node-group" {
-  cluster_name    = aws_eks_cluster.devopsthehardway-eks.name
-  node_group_name = "devopsthehardway-workernodes"
+  cluster_name    = aws_eks_cluster.fwit-eks.name
+  node_group_name = "fwit-workernodes"
   node_role_arn   = aws_iam_role.workernodes.arn
   subnet_ids      = [var.subnet_id_1, var.subnet_id_2]
   instance_types = ["t3.xlarge"]
