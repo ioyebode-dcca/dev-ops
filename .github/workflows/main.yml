@@ -22,7 +22,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2.5.0
     
-
     - name: Configure AWS Credentials Action For GitHub Actions
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -32,21 +31,26 @@ jobs:
     - name: Setup Terraform CLI
       uses: hashicorp/setup-terraform@v2.0.2
 
-
-- name: Terraform init, plan and apply
-  run: |
-    echo `pwd`
-    echo "tfpath ${{ github.event.inputs.tfpath }}"
-    echo "** Running Terraform Init**"
-    terraform init
-
-    echo "** Running Terraform Validate**"
-    terraform validate
-
-    echo "** Running Terraform Plan**"
-    terraform plan
-
-    #echo "** Running Terraform Apply**"
-    #terraform apply -auto-approve
-  working-directory: aws_samples/create_ec2
+    - name: Terraform init, plan and apply
+      run: |
+        echo `pwd`
+        echo "tfpath ${{ github.event.inputs.tfpath }}"
+        echo "** Running Terraform Init**"
+        terraform init
+        
+        echo "** Running Terraform Validate**"
+        terraform validate
+        
+        echo "** Running Terraform Plan**"
+        terraform plan
+        
+#        echo "** Running Terraform Apply**"
+#        terraform apply -auto-approve
+      working-directory: aws_samples/create_ec2
+    - name: Terraform Destroy
+      run: |
+        echo "** Running Terraform Destroy**"
+        terraform plan -destroy
+#        terraform destroy -auto-approve
+      working-directory: aws_samples/create_ec2
 
