@@ -5,67 +5,59 @@ on:
     # Inputs the workflow accepts.
     inputs:
       tfpath:
-        description: 'TF File Path'
+        description: 'TF File Path'     
         required: false
         default: 'aws_samples/create_ec2'
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   tf_code_check:
     name: Terraform Validation and Build
     runs-on: ubuntu-latest
 
-    if: ${{ inputs.tfpath }}
+    if:  ${{ inputs.tfpath }} 
     steps:
-      - uses: actions/checkout@v2.5.0
+    - uses: actions/checkout@v2.5.0
+    
 
-      - name: Configure AWS Credentials Action For GitHub Actions
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 
+    - name: Configure AWS Credentials Action For GitHub Actions
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1 
+    - name: Setup Terraform CLI
+      uses: hashicorp/setup-terraform@v2.0.2
 
-      - name: Set up Terraform CLI
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 2.0.2
+    - name: Create working directory
+      run: |
+        mkdir -p /home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}
+        cp -R /github/workspace/* /home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}/
+      working-directory: ${{ github.event.inputs.tfpath }}
 
-      - name: Set up working directory
-        run: |
-          mkdir -p /home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}
-          cp -r "${{ github.workspace }}/*" "/home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}/"
-          cd "/home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}/"
+    - name: Terraform init, plan and apply
+      run: |
+        echo `pwd`
+        echo "** Running Terraform Init**"
+        terraform init
+        
+        echo "** Running Terraform Validate**"
+        terraform validate
+        
+        echo "** Running Terraform Plan**"
+        terraform plan
+        
+#        echo "** Running Terraform Apply**"
+#        terraform apply -auto-approve
+      working-directory: ${{ github.event.inputs.tfpath }}
 
-      - name: Terraform init, plan and apply
-        run: |
-          echo `pwd`
-          echo "tfpath ${{ github.event.inputs.tfpath }}"
-          echo "** Running Terraform Init**"
-          terraform init
-
-          echo "** Running Terraform Validate**"
-          terraform validate
-
-          echo "** Running Terraform Plan**"
-          terraform plan
-
-          # Uncomment the following line to apply changes automatically
-          # echo "** Running Terraform Apply**"
-          # terraform apply -auto-approve
-
-        working-directory: /home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}
-      
-      - name: Terraform Destroy
-        run: |
-          echo "** Running Terraform Destroy**"
-          terraform plan -destroy
-
-          # Uncomment the following line to destroy changes automatically
-          # terraform destroy -auto-approve
-
-        working-directory: /home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}
+    - name: Terraform Destroy
+      run: |
+        echo "** Running Terraform Destroy**"
+        terraform plan -destroy
+#        terraform destroy -auto-approve
+      working-directory: ${{ github.event.inputs.tfpath }}
 
