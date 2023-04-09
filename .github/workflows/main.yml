@@ -21,7 +21,8 @@ jobs:
     if:  ${{ inputs.tfpath }} 
     steps:
     - uses: actions/checkout@v2.5.0
-    
+      with:
+        ref: ${{ github.ref }}
 
     - name: Configure AWS Credentials Action For GitHub Actions
       uses: aws-actions/configure-aws-credentials@v1
@@ -29,17 +30,19 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1 
-    - name: Setup Terraform CLI
-      uses: hashicorp/setup-terraform@v2.0.2
 
     - name: Create working directory
       run: |
-        mkdir -p /home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}
-        cp -R /github/workspace/* /home/runner/work/dev-ops/dev-ops/${{ github.event.inputs.tfpath }}/
-      working-directory: ${{ github.event.inputs.tfpath }}
+        mkdir -p ${{ github.workspace }}/${{ inputs.tfpath }}
+        cp -r ./* ${{ github.workspace }}/${{ inputs.tfpath }}/
+      working-directory: ./aws_samples/
+
+    - name: Setup Terraform CLI
+      uses: hashicorp/setup-terraform@v2.0.2
 
     - name: Terraform init, plan and apply
       run: |
+        cd ${{ github.workspace }}/${{ inputs.tfpath }}
         echo `pwd`
         echo "** Running Terraform Init**"
         terraform init
@@ -52,12 +55,11 @@ jobs:
         
 #        echo "** Running Terraform Apply**"
 #        terraform apply -auto-approve
-      working-directory: ${{ github.event.inputs.tfpath }}
 
     - name: Terraform Destroy
       run: |
+        cd ${{ github.workspace }}/${{ inputs.tfpath }}
         echo "** Running Terraform Destroy**"
         terraform plan -destroy
 #        terraform destroy -auto-approve
-      working-directory: ${{ github.event.inputs.tfpath }}
 
