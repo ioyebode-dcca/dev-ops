@@ -13,6 +13,7 @@ on:
   pull_request:
     branches: [ main ]
 
+
 jobs:
   tf_code_check:
     name: Terraform Validation and Build
@@ -45,11 +46,10 @@ jobs:
         
 #        echo "** Running Terraform Apply**"
 #        terraform apply -auto-approve
-      working-directory: aws_samples/create_ec2
+      working-directory: /c/Users/ioyebode/Downloads/workflow/aws_samples/create_ec2/dev-ops/
     - name: Terraform Destroy
       run: |
         echo "** Running Terraform Destroy**"
         terraform plan -destroy
 #        terraform destroy -auto-approve
-      working-directory: aws_samples/create_ec2
-
+      working-directory: /c/Users/ioyebode/Downloads/workflow/aws_samples/create_ec2/dev-ops
