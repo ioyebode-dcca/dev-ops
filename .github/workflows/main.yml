@@ -24,7 +24,6 @@ jobs:
     - name: Create working directory
       run: |
         mkdir -p /home/runner/work/dev-ops/dev-ops/aws_samples/create_ec2
-        cp -r /github/workspace/* /home/runner/work/dev-ops/dev-ops/aws_samples/create_ec2
 
     - name: Configure AWS Credentials Action For GitHub Actions
       uses: aws-actions/configure-aws-credentials@v1
